@@ -1,5 +1,7 @@
 # SUNDOWNER 1.0.0
 
+![image](https://github.com/NeuralCortex/Sun/blob/main/images/sun.png)
+
 ## Funktionsweise des Programms
 
 SunDowner ist ein JavaFX-Projekt, welches Sonne- und Mond-Positionen und Phasen berechnet und grafisch anzeigt.</br>
