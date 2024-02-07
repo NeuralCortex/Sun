@@ -195,7 +195,7 @@ public class GraphAnchorController implements Initializable, PopulateInterface {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(datum);
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", Locale.GERMANY);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", Globals.DEFAULT_LOCALE);
 
         SunTimes zm = SunTimes.compute().on(date).at(lat, lon).execute();
 

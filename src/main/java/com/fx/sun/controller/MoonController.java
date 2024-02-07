@@ -141,7 +141,7 @@ public class MoonController implements Initializable, PopulateInterface {
         table.getSelectionModel().setCellSelectionEnabled(true);
 
         lbYear.setText(now.getYear() + "");
-        lbMonth.setText(now.format(DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())));
+        lbMonth.setText(now.format(DateTimeFormatter.ofPattern("MMMM", Globals.DEFAULT_LOCALE)));
 
         btnYearUp.setOnAction(e -> {
             now = now.minusYears(1);

@@ -78,6 +78,7 @@ public class SunChartPolarController implements Initializable, PopulateInterface
         tfLon.setText(lon + "");
 
         btnCalc.setText(bundle.getString("btn.calc.wgs"));
+        btnTime.setText(bundle.getString("btn.calc.wgs"));
 
         dpDate.setValue(now);
         tfTime.setText("13:39:00");

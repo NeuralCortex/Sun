@@ -58,7 +58,7 @@ public class DailyController implements Initializable, PopulateInterface {
         tfLon.setText(lon + "");
 
         btnCalc.setText(bundle.getString("btn.calc.wgs"));
-        lbDate.setText(now.format(DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", Locale.getDefault())));
+        lbDate.setText(now.format(DateTimeFormatter.ofPattern("EEEE, dd.MM.yyyy", Globals.DEFAULT_LOCALE)));
 
         infoAnchorPage = new InfoAnchorPage();
         borderPane.setCenter(infoAnchorPage);
