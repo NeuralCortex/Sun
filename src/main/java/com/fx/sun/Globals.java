@@ -98,6 +98,6 @@ public class Globals {
     //Show Test-UI
     public static boolean SHOW_TEST_UI = false;
 
-    public static final double HEIGHT = 900;//900.0f;
+    public static final double HEIGHT = 720;//900.0f;
     public static final double WIDTH = HEIGHT * 18.0f / 9.0f;
 }
