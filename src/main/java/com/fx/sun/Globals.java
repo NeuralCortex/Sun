@@ -9,7 +9,7 @@ public class Globals {
     public static final String LOG4J2_CONFIG_PATH = System.getProperty("user.dir") + "/config/log4j2.xml";
     public static final String XML_CONFIG_PATH = System.getProperty("user.dir") + "/config/config.xml";
     public static final String POV_BLUEPRINT_CONFIG_PATH = System.getProperty("user.dir") + "/config/blueprint.pov";
-    
+
     public static final Locale DEFAULT_LOCALE = Locale.US;
 
     public static XMLPropertyManager propman;
@@ -22,6 +22,8 @@ public class Globals {
     public static final String APP_LOGO_PATH = System.getProperty("user.dir") + "/images/kdf.png";
     public static final String SIDE_IMAGE_PATH = System.getProperty("user.dir") + "/images/side.png";
     public static final String CSS_PATH = "/com/fx/sun/style/hec.css";
+    public static final String DARK_THEME = "/com/fx/sun/style/dark.css";
+    public static final String LIGHT_THEME = "/com/fx/sun/style/light.css";
     public static final String MOON_IMAGE_PATH = System.getProperty("user.dir") + "/images/mond_small.png";
 
     //FXML
@@ -98,6 +100,6 @@ public class Globals {
     //Show Test-UI
     public static boolean SHOW_TEST_UI = false;
 
-    public static final double HEIGHT = 720;//900.0f;
+    public static final double HEIGHT = 900;//900.0f;
     public static final double WIDTH = HEIGHT * 18.0f / 9.0f;
 }
