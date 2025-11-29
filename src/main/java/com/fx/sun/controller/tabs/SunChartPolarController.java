@@ -1,6 +1,7 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
 import com.fx.sun.Globals;
+import com.fx.sun.controller.PopulateInterface;
 import com.fx.sun.pojo.EleTimePOJO;
 import com.fx.sun.tools.StundenSchleifenThread;
 import com.fx.sun.tools.SunChartPolarAnchorPage;
@@ -72,7 +73,7 @@ public class SunChartPolarController implements Initializable, PopulateInterface
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
-        hBox.setId("hec-background-blue");
+        hBox.getStyleClass().add("blue");
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");
@@ -240,8 +241,8 @@ public class SunChartPolarController implements Initializable, PopulateInterface
             borderPane.setCenter(sunChartPolarAnchorPage);
         }
 
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+         lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");

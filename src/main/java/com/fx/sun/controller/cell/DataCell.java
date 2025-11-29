@@ -55,9 +55,8 @@ public class DataCell extends TableCell<DatePOJO, LocalDate> {
             HBox hBox = new HBox();
 
             Label datum = new Label(simpleDateFormat.format(calendar.getTime()));
-            datum.setId("hec-text-15");
             if (item.equals(now)) {
-                datum.setId("hec-text-15-red");
+                datum.getStyleClass().add("text-red");
             }
 
             //new
@@ -80,8 +79,6 @@ public class DataCell extends TableCell<DatePOJO, LocalDate> {
             Label lbSunrise = new Label("▲" + simpleDateFormat.format(sunriseSunset==null?"99:99":sunriseSunset[0].getTime()));
             Label lbSunset = new Label("▼" + simpleDateFormat.format(sunriseSunset==null?"99:99":sunriseSunset[1].getTime()));
              */
-            lbSunrise.setId("hec-text-12");
-            lbSunset.setId("hec-text-12");
 
             vBox2.getChildren().addAll(lbSunrise, lbSunset);
 
@@ -94,7 +91,7 @@ public class DataCell extends TableCell<DatePOJO, LocalDate> {
             VBox.setMargin(hBox, new Insets(0, 10, 10, 10));
 
             if (item.getMonth().equals(month.getMonth())) {
-                vBox.setId("hec-background-orange");
+                vBox.getStyleClass().add("orange");
             }
 
             setGraphic(vBox);

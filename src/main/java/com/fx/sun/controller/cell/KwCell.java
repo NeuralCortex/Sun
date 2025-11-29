@@ -39,7 +39,6 @@ public class KwCell extends TableCell<DatePOJO, LocalDate> {
             String formatted = String.format("%02d", kw);
 
             lbKW.setText(bundle.getString("col.kw.short") + ": " + formatted);
-            lbKW.setId("hec-text-12");
 
             vBox.setAlignment(Pos.CENTER);
             vBox.getChildren().addAll(lbKW);

@@ -53,7 +53,7 @@ import org.jxmapviewer.viewer.TileFactoryInfo;
  *
  * @author pscha
  */
-public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
+public class OsmDialog extends Dialog<PosPOJO> implements Initializable {
 
     @FXML
     private BorderPane borderPane;
@@ -70,9 +70,8 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
     private final JXMapViewer mapViewer = new JXMapViewer();
     private final List<Painter<JXMapViewer>> painters = new ArrayList<>();
     private SwingNode swingNode;
-    //Kriegerehrenmal Zella-Mehlis
-    private double lat = 50.659338995337976;
-    private double lon = 10.665138248049024;
+    private double lat;
+    private double lon;
 
     private final ResourceBundle bundle;
 
@@ -86,6 +85,7 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
         HelperFunctions.centerWindow(getDialogPane().getScene().getWindow());
 
         Stage stageDlg = (Stage) getDialogPane().getScene().getWindow();
+        getDialogPane().getStylesheets().add(Globals.CSS_PATH);
         try {
             stageDlg.getIcons().add(new Image(new FileInputStream(new File(Globals.APP_LOGO_PATH))));
         } catch (Exception ex) {
@@ -102,11 +102,9 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
 
         setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
-                double lat = -9999;
-                double lon = -9999;
                 try {
-                    lat = Double.valueOf(tfLat.getText());
-                    lon = Double.valueOf(tfLon.getText());
+                    lat = Double.parseDouble(tfLat.getText());
+                    lon = Double.parseDouble(tfLon.getText());
                 } catch (NumberFormatException ex) {
                     _log.error(ex.getMessage());
                 }
@@ -128,11 +126,10 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
         mapViewer.add(labelAttr, BorderLayout.SOUTH);
         labelAttr.setText(defaultTileFactory.getInfo().getAttribution() + " - " + defaultTileFactory.getInfo().getLicense());
 
-        // Set the focus
-        GeoPosition zellaMehlis = new GeoPosition(lat, lon);
+        GeoPosition loc = new GeoPosition(lat, lon);
 
         mapViewer.setZoom(7);
-        mapViewer.setAddressLocation(zellaMehlis);
+        mapViewer.setAddressLocation(loc);
 
         // Add interactions
         MouseInputListener mil = new PanMouseInputListener(mapViewer);
@@ -195,6 +192,9 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
+        lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
+
         initOsmMap();
 
         lbLat.setText(bundle.getString("dlg.wgs.lat") + " (-90° - 90°)");
@@ -211,9 +211,6 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
             getClipboardFromGoogleMaps(e);
         });
 
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
-
         painters.clear();
         GeoPosition geoPosition = new GeoPosition(lat, lon);
         mapViewer.setAddressLocation(geoPosition);
@@ -221,11 +218,8 @@ public class OsmDialog extends Dialog<PosPOJO> implements Initializable{
         painters.add(new CrossPainter(geoPosition));
         CompoundPainter<JXMapViewer> painter = new CompoundPainter<>(painters);
         mapViewer.setOverlayPainter(painter);
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                mapViewer.repaint();
-            }
+        SwingUtilities.invokeLater(() -> {
+            mapViewer.repaint();
         });
     }
 

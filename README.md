@@ -1,10 +1,10 @@
-# SunDowner 1.0.0
+# SunLab
 
 ![SunDowner Logo](https://github.com/NeuralCortex/Sun/blob/main/images/sun.png)
 
 ## Overview
 
-SunDowner is a JavaFX application that calculates and visually displays the positions and phases of the sun and moon. It utilizes nearly all features of the [commons-suncalc](https://shredzone.org/maven/commons-suncalc/index.html) library, available on GitHub and Maven.
+SunLab is a JavaFX application that calculates and visually displays the positions and phases of the sun and moon. It utilizes nearly all features of the [commons-suncalc](https://shredzone.org/maven/commons-suncalc/index.html) library, available on GitHub and Maven.
 
 ### Features
 

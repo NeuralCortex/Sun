@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.fx</groupId>
     <artifactId>Sun</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>24</maven.compiler.release>
@@ -12,17 +12,17 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>19-ea+7</version>
+            <version>25.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>19-ea+7</version>
+            <version>25.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-swing</artifactId>
-            <version>19-ea+7</version>
+            <version>25.0.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -40,9 +40,9 @@
             <version>3.7</version>
         </dependency>
         <dependency>
-            <groupId>org.jxmapviewer</groupId>
+            <groupId>jxmapviewer2</groupId>
             <artifactId>jxmapviewer2</artifactId>
-            <version>2.6</version>
+            <version>2.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

@@ -22,6 +22,7 @@ public class MoonAnchorPage extends AnchorPane {
     private double phase = 30;
     private int size = 200;
     private boolean isNight = false;
+    private Color backGroundColor;
 
     public MoonAnchorPage(Image moon, double phase, double rotAngle, boolean isNight) {
         this.moon = moon;
@@ -56,8 +57,8 @@ public class MoonAnchorPage extends AnchorPane {
         }
 
         Path path = new Path();
-        path.setFill(Color.web("#2196F3"));
-        path.setStroke(Color.web("#2196F3"));
+        path.setFill(backGroundColor);
+        path.setStroke(backGroundColor);
         if (isNight) {
             path.setFill(Color.BLACK);
             path.setStroke(Color.BLACK);
@@ -105,5 +106,9 @@ public class MoonAnchorPage extends AnchorPane {
 
     public void setRotAngle(double rotAngle) {
         this.rotAngle = rotAngle;
+    }
+
+    public void setBackGroundColor(Color backGroundColor) {
+        this.backGroundColor = backGroundColor;
     }
 }

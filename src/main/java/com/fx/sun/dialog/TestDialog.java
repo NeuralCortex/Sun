@@ -40,9 +40,9 @@ public class TestDialog extends Dialog<PosPOJO> implements Initializable {
     private TextField tfLon;
 
     private static final Logger _log = LogManager.getLogger(TestDialog.class);
-    //Kriegerehrenmal Zella-Mehlis
-    private final double lat = 50.659338995337976;
-    private final double lon = 10.665138248049024;
+
+    private double lat;
+    private double lon;
 
     private final ResourceBundle bundle;
 
@@ -55,6 +55,7 @@ public class TestDialog extends Dialog<PosPOJO> implements Initializable {
         HelperFunctions.centerWindow(getDialogPane().getScene().getWindow());
 
         Stage stageDlg = (Stage) getDialogPane().getScene().getWindow();
+        getDialogPane().getStylesheets().add(Globals.CSS_PATH);
         try {
             stageDlg.getIcons().add(new Image(new FileInputStream(new File(Globals.APP_LOGO_PATH))));
         } catch (Exception ex) {
@@ -71,11 +72,9 @@ public class TestDialog extends Dialog<PosPOJO> implements Initializable {
 
         setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
-                double lat = -9999;
-                double lon = -9999;
                 try {
-                    lat = Double.valueOf(tfLat.getText());
-                    lon = Double.valueOf(tfLon.getText());
+                    lat = Double.parseDouble(tfLat.getText());
+                    lon = Double.parseDouble(tfLon.getText());
                 } catch (NumberFormatException ex) {
                     _log.error(ex.getMessage());
                 }
@@ -90,13 +89,16 @@ public class TestDialog extends Dialog<PosPOJO> implements Initializable {
         lbLat.setText(bundle.getString("dlg.wgs.lat") + " (-90° - 90°)");
         lbLon.setText(bundle.getString("dlg.wgs.lon") + " (-180° - 180°)");
 
-        tfLat.setText(Globals.propman.getProperty(Globals.COORD_LAT, lat + ""));
-        tfLon.setText(Globals.propman.getProperty(Globals.COORD_LON, lon + ""));
+        lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
+
+        tfLat.setText(lat + "");
+        tfLon.setText(lon + "");
 
         tfLat.setOnKeyPressed(e -> {
             getClipboardFromGoogleMaps(e);
         });
-        
+
         tfLon.setOnKeyPressed(e -> {
             getClipboardFromGoogleMaps(e);
         });

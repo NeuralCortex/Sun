@@ -62,12 +62,12 @@ public class SunParamsCell extends TableCell<DatePOJO, LocalDate> {
 
             VBox vBox = new VBox();
             VBox infos = new VBox();
-            infos.setId("hec-text-10");
+           
 
             Label datum = new Label(simpleDateFormat.format(calendar.getTime()));
-            datum.setId("hec-text-15");
+          
             if (item.equals(now)) {
-                datum.setId("hec-text-15-red");
+                datum.getStyleClass().add("text-red");
             }
 
             LocalDateTime t = item.atTime(hour, min, sec);
@@ -89,7 +89,7 @@ public class SunParamsCell extends TableCell<DatePOJO, LocalDate> {
             VBox.setMargin(infos, new Insets(0, 10, 10, 10));
 
             if (item.getMonth().equals(month.getMonth())) {
-                vBox.setId("hec-background-orange");
+                vBox.getStyleClass().add("orange");
             }
 
             setGraphic(vBox);

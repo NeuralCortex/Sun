@@ -1,6 +1,8 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
 import com.fx.sun.Globals;
+import com.fx.sun.controller.MainController;
+import com.fx.sun.controller.PopulateInterface;
 import com.fx.sun.controller.cell.VisibleCell;
 import com.fx.sun.pojo.ComboBoxPOJO;
 import com.fx.sun.pojo.TablePOJO;
@@ -96,9 +98,7 @@ public class MoonTableController implements Initializable, PopulateInterface {
     public void initialize(URL url, ResourceBundle bundle) {
         this.bundle = bundle;
 
-        hBox.setId("hec-background-blue");
-        rbMoon.setId("hec-text-white");
-        rbSun.setId("hec-text-white");
+        hBox.getStyleClass().add("blue");
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");
@@ -308,8 +308,8 @@ public class MoonTableController implements Initializable, PopulateInterface {
 
     @Override
     public void populate() {
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+         lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");

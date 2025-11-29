@@ -5,6 +5,19 @@
  */
 package com.fx.sun.controller;
 
+import com.fx.sun.controller.tabs.MoonController;
+import com.fx.sun.controller.tabs.DistController;
+import com.fx.sun.controller.tabs.BigDataController;
+import com.fx.sun.controller.tabs.EleTimeController;
+import com.fx.sun.controller.tabs.EleAziController;
+import com.fx.sun.controller.tabs.GraphAnchorController;
+import com.fx.sun.controller.tabs.MoonParamsController;
+import com.fx.sun.controller.tabs.CalController;
+import com.fx.sun.controller.tabs.SunParamsController;
+import com.fx.sun.controller.tabs.SunChartPolarController;
+import com.fx.sun.controller.tabs.DailyController;
+import com.fx.sun.controller.tabs.SunChartController;
+import com.fx.sun.controller.tabs.MoonTableController;
 import com.fx.sun.Globals;
 import com.fx.sun.dialog.OsmDialog;
 import com.fx.sun.dialog.TestDialog;
@@ -98,18 +111,18 @@ public class MainController implements Initializable {
         tabPane.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) -> {
             ((PopulateInterface) newValue.getContent().getUserData()).populate();
             lbStatus.setText("");
-            
-            if(newValue!=tabSunChart||newValue!=tabSunPolarChart){
+
+            if (newValue != tabSunChart || newValue != tabSunPolarChart) {
                 ((PopulateInterface) tabSunChart.getContent().getUserData()).clear();
                 ((PopulateInterface) tabSunPolarChart.getContent().getUserData()).clear();
                 System.out.println("Clearing Tab Sun Chart and Tab Sun Polar");
             }
-            if(newValue==tabSunChart){
+            if (newValue == tabSunChart) {
                 ((PopulateInterface) tabSunChart.getContent().getUserData()).populate();
                 System.out.println("Restore Tab Sun Chart");
-                
+
             }
-            if(newValue==tabSunPolarChart){
+            if (newValue == tabSunPolarChart) {
                 ((PopulateInterface) tabSunPolarChart.getContent().getUserData()).populate();
                 System.out.println("Restore Tab Sun Chart Polar");
             }
@@ -117,6 +130,7 @@ public class MainController implements Initializable {
 
         miOSM.setOnAction(e -> {
             OsmDialog osmDialog = new OsmDialog(bundle);
+            HelperFunctions.styleDialogButtons(osmDialog);
             Optional<PosPOJO> res = osmDialog.showAndWait();
             if (res.isPresent()) {
                 PosPOJO posPOJO = res.get();
@@ -130,6 +144,7 @@ public class MainController implements Initializable {
 
         miSet.setOnAction(e -> {
             TestDialog dialog = new TestDialog(bundle);
+            HelperFunctions.styleDialogButtons(dialog);
             Optional<PosPOJO> res = dialog.showAndWait();
             if (res.isPresent()) {
                 PosPOJO posPOJO = res.get();
@@ -178,6 +193,7 @@ public class MainController implements Initializable {
         HelperFunctions.centerWindow(alert.getDialogPane().getScene().getWindow());
 
         Stage stageDlg = (Stage) alert.getDialogPane().getScene().getWindow();
+        alert.getDialogPane().getStylesheets().add(Globals.CSS_PATH);
         try {
             stageDlg.getIcons().add(new Image(new FileInputStream(new File(Globals.APP_LOGO_PATH))));
         } catch (Exception ex) {
@@ -187,15 +203,13 @@ public class MainController implements Initializable {
         alert.setTitle(bundle.getString("dlg.about.info"));
         alert.setHeaderText(bundle.getString("dlg.about.header"));
         String programmer = bundle.getString("dlg.about.content");
-        alert.setContentText(MessageFormat.format(programmer, String.format("%d", LocalDate.now().getYear())));
+        alert.setContentText(MessageFormat.format(programmer, LocalDate.now().getYear()));
 
         alert.showAndWait();
     }
 
     private void init(ResourceBundle bundle) {
-        hboxStatus.setId("hec-background-blue");
-        lbStatus.setId("hec-text-white");
-        lbInfo.setId("hec-text-white");
+        hboxStatus.getStyleClass().add("blue");
 
         menuFile.setText(bundle.getString("menu.file"));
         menuHelp.setText(bundle.getString("menu.help"));
@@ -206,7 +220,7 @@ public class MainController implements Initializable {
         miOSM.setText(bundle.getString("mi.set.coord.osm"));
 
         String programmer = bundle.getString("dlg.about.content");
-        lbInfo.setText(MessageFormat.format(programmer, String.format("%d", LocalDate.now().getYear())));
+        lbInfo.setText(MessageFormat.format(programmer, LocalDate.now().getYear()));
     }
 
     public Stage getStage() {

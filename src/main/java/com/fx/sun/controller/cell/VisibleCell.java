@@ -28,7 +28,7 @@ public class VisibleCell extends TableCell<TablePOJO, Double> {
             label.setStyle("-fx-font: 10px Arial");
 
             if (item < 0) {
-                hBox.setId("hec-background-orange");
+                hBox.getStyleClass().add("orange");
             }
             hBox.getChildren().add(label);
             setGraphic(hBox);

@@ -1,11 +1,13 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
-import com.fx.sun.Globals;
-import com.fx.sun.controller.cell.SunParamsCell;
+import com.fx.sun.controller.cell.MoonCell;
 import com.fx.sun.controller.cell.KwCell;
+import com.fx.sun.Globals;
+import com.fx.sun.controller.PopulateInterface;
 import com.fx.sun.pojo.DatePOJO;
-import java.awt.Toolkit;
-import java.awt.datatransfer.DataFlavor;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.net.URL;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -16,25 +18,24 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Stream;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
  * @author pscha
  */
-public class SunParamsController implements Initializable, PopulateInterface {
+public class MoonController implements Initializable, PopulateInterface {
 
     @FXML
     private TableView<DatePOJO> table;
@@ -53,13 +54,7 @@ public class SunParamsController implements Initializable, PopulateInterface {
     @FXML
     private HBox hBox;
     @FXML
-    private TextField tfLat;
-    @FXML
-    private TextField tfLon;
-    @FXML
-    private TextField tfTime;
-    @FXML
-    private Button btnCalc;
+    private CheckBox cbNight;
 
     private LocalDate monday = null;
     private LocalDate tuesday = null;
@@ -82,35 +77,45 @@ public class SunParamsController implements Initializable, PopulateInterface {
 
     private List<DatePOJO> list = new ArrayList<>();
 
-    private double lat;
-    private double lon;
-
-    private int hour;
-    private int min;
-    private int sec;
-
-    private static final Logger _log = LogManager.getLogger(SunParamsController.class);
     private ResourceBundle bundle;
+    private Image moon = null;
+    private int size = 40;
+
+    public MoonController() {
+        try {
+            BufferedImage bi = ImageIO.read(new File(Globals.MOON_IMAGE_PATH));
+            bi = convertToBufferedImage(resizeImage(bi, size, size));
+            moon = SwingFXUtils.toFXImage(bi, null);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private java.awt.Image resizeImage(BufferedImage bufferedImage, int width, int height) {
+        return bufferedImage.getScaledInstance(width, height, java.awt.Image.SCALE_SMOOTH);
+    }
+
+    public static BufferedImage convertToBufferedImage(java.awt.Image image) {
+        BufferedImage newImage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = newImage.createGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         this.bundle = bundle;
 
-        hBox.setId("hec-background-blue");
-        lbYear.setId("hec-text-white");
-        lbMonth.setId("hec-text-white");
+        hBox.getStyleClass().add("blue");
 
         btnYearUp.setText("<");
         btnYearDown.setText(">");
 
         btnMonthUp.setText("<");
         btnMonthDown.setText(">");
-
-        tfLat.setText(lat + "");
-        tfLon.setText(lon + "");
-        tfTime.setText("12:00:00");
-
-        btnCalc.setText(bundle.getString("btn.calc.wgs"));
+        
+        cbNight.setText("Night Vision");
 
         colKW = new TableColumn(bundle.getString("col.kw"));
         colMon = new TableColumn(bundle.getString("col.mon"));
@@ -167,64 +172,39 @@ public class SunParamsController implements Initializable, PopulateInterface {
             lbMonth.setText(now.format(DateTimeFormatter.ofPattern("MMMM", Locale.getDefault())));
             populateTable();
         });
-
-        btnCalc.setOnAction(e -> {
-            lat = Double.valueOf(tfLat.getText());
-            lon = Double.valueOf(tfLon.getText());
-            String timeStr[] = tfTime.getText().split(":");
-            hour = Integer.valueOf(timeStr[0]);
-            min = Integer.valueOf(timeStr[1]);
-            sec = Integer.valueOf(timeStr[2]);
+        
+        cbNight.selectedProperty().addListener((ov,o,n)->{
             populateTable();
         });
-
-        tfLat.setOnKeyPressed(e -> {
-            getClipboardFromGoogleMaps(e);
-        });
-
-        tfLon.setOnKeyPressed(e -> {
-            getClipboardFromGoogleMaps(e);
-        });
-    }
-
-    private void getClipboardFromGoogleMaps(KeyEvent e) {
-        if (e.isControlDown() && e.getCode() == KeyCode.V) {
-            try {
-                String rawData = (String) Toolkit.getDefaultToolkit().getSystemClipboard().getData(DataFlavor.stringFlavor);
-                String wgsPos[] = rawData.split(",");
-                tfLat.setText(wgsPos[0].trim());
-                tfLon.setText(wgsPos[1].trim());
-            } catch (Exception ex) {
-                _log.error(ex.getMessage());
-            }
-        }
     }
 
     private void populateTable() {
+        
+        boolean isNight=cbNight.isSelected();
 
         colKW.setCellFactory((param) -> {
             return new KwCell(bundle);
         });
         colMon.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colDie.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colMit.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colDon.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colFri.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colSat.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
         colSun.setCellFactory((param) -> {
-            return new SunParamsCell(lat, lon, now, hour, min, sec, bundle);
+            return new MoonCell(now, moon, bundle,isNight);
         });
 
         int year = now.getYear();
@@ -270,12 +250,6 @@ public class SunParamsController implements Initializable, PopulateInterface {
 
     @Override
     public void populate() {
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
-
-        tfLat.setText(lat + "");
-        tfLon.setText(lon + "");
-
         populateTable();
     }
 

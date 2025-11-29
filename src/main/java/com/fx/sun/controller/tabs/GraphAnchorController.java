@@ -1,16 +1,21 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
 import com.fx.sun.Globals;
+import com.fx.sun.controller.PopulateInterface;
 import com.fx.sun.pojo.DatePosPOJO;
 import com.fx.sun.pojo.TimePOJO;
-import com.fx.sun.tools.DistAnchorPane;
+import com.fx.sun.tools.SunriseAnchorPane;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -25,14 +30,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.shredzone.commons.suncalc.MoonPosition;
-import org.shredzone.commons.suncalc.SunPosition;
+import org.shredzone.commons.suncalc.SunTimes;
 
 /**
  *
  * @author pscha
  */
-public class DistController implements Initializable, PopulateInterface {
+public class GraphAnchorController implements Initializable, PopulateInterface {
 
     @FXML
     private BorderPane borderPane;
@@ -53,30 +57,27 @@ public class DistController implements Initializable, PopulateInterface {
 
     private LocalDate now = LocalDate.now();
 
-    private static final Logger _log = LogManager.getLogger(DistController.class);
-    DistAnchorPane distAnchorPane;
+    private static final Logger _log = LogManager.getLogger(GraphAnchorController.class);
+    SunriseAnchorPane sunriseAnchorPane;
     private double lat;
     private double lon;
 
     public static enum TYPE {
-        SUN, MOON
+        SUNSET, SUNRISE
     };
-    private final TYPE type;
 
     private ResourceBundle bundle;
 
-    public DistController(TYPE type) {
-        this.type = type;
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+    public GraphAnchorController() {
+         lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
     }
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         this.bundle = bundle;
 
-        hBox.setId("hec-background-blue");
-        lbYear.setId("hec-text-white");
+        hBox.getStyleClass().add("blue");
 
         btnYearDown.setText("<");
         btnYearUp.setText(">");
@@ -87,14 +88,13 @@ public class DistController implements Initializable, PopulateInterface {
 
         btnCalc.setText(bundle.getString("btn.calc.wgs"));
 
-        distAnchorPane = new DistAnchorPane(type);
-        setupAndRedraw();
-        borderPane.setCenter(distAnchorPane);
+        sunriseAnchorPane = new SunriseAnchorPane();
+        borderPane.setCenter(sunriseAnchorPane);
 
-        distAnchorPane.setOnMouseMoved(e -> {
-            distAnchorPane.setMx(e.getX());
-            distAnchorPane.setMy(e.getY());
-            distAnchorPane.redraw();
+        sunriseAnchorPane.setOnMouseMoved(e -> {
+            sunriseAnchorPane.setMx(e.getX());
+            sunriseAnchorPane.setMy(e.getY());
+            sunriseAnchorPane.redraw();
         });
 
         btnYearUp.setOnAction(e -> {
@@ -138,13 +138,13 @@ public class DistController implements Initializable, PopulateInterface {
     }
 
     private void setupAndRedraw() {
-        distAnchorPane.setNow(now);
-        distAnchorPane.setDaysInYear(now.lengthOfYear());
-        distAnchorPane.setListMonths(calcMonths(now));
-        distAnchorPane.setLat(lat);
-        distAnchorPane.setLon(lon);
+        sunriseAnchorPane.setNow(now);
+        sunriseAnchorPane.setDaysInYear(now.lengthOfYear());
+        sunriseAnchorPane.setListMonths(calcMonths(now));
+        sunriseAnchorPane.setLat(lat);
+        sunriseAnchorPane.setLon(lon);
         passGraphToAnchorPane();
-        distAnchorPane.redraw();
+        sunriseAnchorPane.redraw();
     }
 
     private List<DatePosPOJO> calcMonths(LocalDate date) {
@@ -163,37 +163,64 @@ public class DistController implements Initializable, PopulateInterface {
         LocalDate yearStart = LocalDate.ofYearDay(now.getYear(), 1);
         LocalDate yearEnd = LocalDate.ofYearDay(now.getYear(), now.lengthOfYear());
 
-        Stream<LocalDate> dates = yearStart.datesUntil(yearEnd.plusDays(1));
-        List<TimePOJO> list = getDist(dates);
+        Stream<LocalDate> datesRise = yearStart.datesUntil(yearEnd.plusDays(1));
+        Stream<LocalDate> datesSunset = yearStart.datesUntil(yearEnd.plusDays(1));
+        List<TimePOJO> listRise = filter99FromStream(datesRise, GraphAnchorController.TYPE.SUNRISE);
+        List<TimePOJO> listSet = filter99FromStream(datesSunset, GraphAnchorController.TYPE.SUNSET);
 
-        double min = list.stream().min(Comparator.comparing(t -> t.getTime())).get().getTime();
-        double max = list.stream().max(Comparator.comparing(t -> t.getTime())).get().getTime();
-
-        distAnchorPane.setListDist(list, min, max);
+        sunriseAnchorPane.setListRise(listRise);
+        sunriseAnchorPane.setListSunset(listSet);
     }
 
-    private List<TimePOJO> getDist(Stream<LocalDate> stream) {
+    private List<TimePOJO> filter99FromStream(Stream<LocalDate> stream, GraphAnchorController.TYPE type) {
         return stream.
-                map(m -> new TimePOJO(m.getDayOfYear(), getDist(m))).
+                filter(f -> !getTime(f, type).contains("99")).
+                map(m -> new TimePOJO(m.getDayOfYear(), getTimeDouble(m, type))).
                 collect(Collectors.toList());
     }
 
-    private double getDist(LocalDate date) {
-        double distance;
-        if (type == TYPE.MOON) {
-            MoonPosition moonPosition = MoonPosition.compute().on(date).at(lat, lon).execute();
-            distance = moonPosition.getDistance();
+    private double getTimeDouble(LocalDate date, GraphAnchorController.TYPE type) {
+        String time = getTime(date, type);
+
+        String sun[] = time.split(":");
+        int sunHour = Integer.valueOf(sun[0]);
+        int sunMinutes = Integer.valueOf(sun[1]);
+
+        double sunTime = sunHour + sunMinutes / (60.0f);
+        return sunTime;
+    }
+
+    private String getTime(LocalDate date, GraphAnchorController.TYPE type) {
+        Date datum = Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(datum);
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm", Globals.DEFAULT_LOCALE);
+
+        SunTimes zm = SunTimes.compute().on(date).at(lat, lon).execute();
+
+        String sunset;
+        if (type == GraphAnchorController.TYPE.SUNSET) {
+            //sunset = calculator.getOfficialSunsetForDate(calendar);
+            sunset = zm.getRise() != null ? zm.getRise().format(dateTimeFormatter) : "99:99";
+            if (zm.isAlwaysUp() || zm.isAlwaysDown()) {
+                sunset = "99:99";
+            }
         } else {
-            SunPosition sunPosition = SunPosition.compute().on(date).at(lat, lon).execute();
-            distance = sunPosition.getDistance();
+            //sunset = calculator.getOfficialSunriseForDate(calendar);
+            sunset = zm.getSet() != null ? zm.getSet().format(dateTimeFormatter) : "99:99";
+            if (zm.isAlwaysUp() || zm.isAlwaysDown()) {
+                sunset = "99:99";
+            }
         }
-        return distance;
+
+        return sunset;
     }
 
     @Override
     public void populate() {
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+         lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");

@@ -1,6 +1,7 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
 import com.fx.sun.Globals;
+import com.fx.sun.controller.PopulateInterface;
 import com.fx.sun.tools.InfoAnchorPage;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -51,8 +52,7 @@ public class DailyController implements Initializable, PopulateInterface {
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
-        hBox.setId("hec-background-blue");
-        lbDate.setId("hec-text-white");
+        hBox.getStyleClass().add("blue");
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");
@@ -99,8 +99,8 @@ public class DailyController implements Initializable, PopulateInterface {
 
     @Override
     public void populate() {
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+        lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");

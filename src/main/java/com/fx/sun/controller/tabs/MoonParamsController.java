@@ -1,8 +1,9 @@
-package com.fx.sun.controller;
+package com.fx.sun.controller.tabs;
 
 import com.fx.sun.Globals;
+import com.fx.sun.controller.PopulateInterface;
+import com.fx.sun.controller.cell.MoonParamsCell;
 import com.fx.sun.controller.cell.KwCell;
-import com.fx.sun.controller.cell.DataCell;
 import com.fx.sun.pojo.DatePOJO;
 import java.awt.Toolkit;
 import java.awt.datatransfer.DataFlavor;
@@ -34,7 +35,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author pscha
  */
-public class CalController implements Initializable, PopulateInterface {
+public class MoonParamsController implements Initializable, PopulateInterface {
 
     @FXML
     private TableView<DatePOJO> table;
@@ -56,6 +57,8 @@ public class CalController implements Initializable, PopulateInterface {
     private TextField tfLat;
     @FXML
     private TextField tfLon;
+    @FXML
+    private TextField tfTime;
     @FXML
     private Button btnCalc;
 
@@ -83,16 +86,18 @@ public class CalController implements Initializable, PopulateInterface {
     private double lat;
     private double lon;
 
-    private static final Logger _log = LogManager.getLogger(CalController.class);
+    private int hour;
+    private int min;
+    private int sec;
+
+    private static final Logger _log = LogManager.getLogger(MoonParamsController.class);
     private ResourceBundle bundle;
 
     @Override
     public void initialize(URL url, ResourceBundle bundle) {
         this.bundle = bundle;
 
-        hBox.setId("hec-background-blue");
-        lbYear.setId("hec-text-white");
-        lbMonth.setId("hec-text-white");
+        hBox.getStyleClass().add("blue");
 
         btnYearUp.setText("<");
         btnYearDown.setText(">");
@@ -102,6 +107,7 @@ public class CalController implements Initializable, PopulateInterface {
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");
+        tfTime.setText("12:00:00");
 
         btnCalc.setText(bundle.getString("btn.calc.wgs"));
 
@@ -164,6 +170,10 @@ public class CalController implements Initializable, PopulateInterface {
         btnCalc.setOnAction(e -> {
             lat = Double.valueOf(tfLat.getText());
             lon = Double.valueOf(tfLon.getText());
+            String timeStr[] = tfTime.getText().split(":");
+            hour = Integer.valueOf(timeStr[0]);
+            min = Integer.valueOf(timeStr[1]);
+            sec = Integer.valueOf(timeStr[2]);
             populateTable();
         });
 
@@ -195,25 +205,25 @@ public class CalController implements Initializable, PopulateInterface {
             return new KwCell(bundle);
         });
         colMon.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colDie.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colMit.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colDon.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colFri.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colSat.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
         colSun.setCellFactory((param) -> {
-            return new DataCell(lat, lon, now);
+            return new MoonParamsCell(lat, lon, now, hour, min, sec, bundle);
         });
 
         int year = now.getYear();
@@ -259,8 +269,8 @@ public class CalController implements Initializable, PopulateInterface {
 
     @Override
     public void populate() {
-        lat = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LAT));
-        lon = Double.valueOf(Globals.propman.getProperty(Globals.COORD_LON));
+         lat = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LAT, Globals.DEFAULT_LOC.getLatitude() + ""));
+        lon = Double.parseDouble(Globals.propman.getProperty(Globals.COORD_LON, Globals.DEFAULT_LOC.getLongitude() + ""));
 
         tfLat.setText(lat + "");
         tfLon.setText(lon + "");

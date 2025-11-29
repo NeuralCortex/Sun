@@ -2,9 +2,11 @@ package com.fx.sun.tools;
 
 import java.io.IOException;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.control.Dialog;
 import javafx.stage.Screen;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
@@ -33,5 +35,14 @@ public class HelperFunctions {
             _log.error(ex.getMessage());
         }
         return null;
+    }
+
+    public static void styleDialogButtons(Dialog<?> dialog) {
+        dialog.setOnShown(e
+                -> Platform.runLater(()
+                        -> dialog.getDialogPane().lookupAll(".button")
+                        .forEach(btn -> btn.getStyleClass().add("btn-blue"))
+                )
+        );
     }
 }

@@ -1,6 +1,6 @@
 package com.fx.sun.tools;
 
-import com.fx.sun.controller.DistController;
+import com.fx.sun.controller.tabs.DistController;
 import com.fx.sun.pojo.DatePosPOJO;
 import com.fx.sun.pojo.TimePOJO;
 import java.time.LocalDate;

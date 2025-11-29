@@ -1,6 +1,6 @@
 package com.fx.sun.tools;
 
-import com.fx.sun.controller.GraphAnchorController;
+import com.fx.sun.controller.tabs.GraphAnchorController;
 import com.fx.sun.pojo.DatePosPOJO;
 import com.fx.sun.pojo.TimePOJO;
 import java.time.Duration;

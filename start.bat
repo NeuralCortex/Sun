@@ -2,7 +2,7 @@
 REM Batch file to run a JavaFX JAR application
 
 REM Set the path to your JavaFX JAR file
-SET JAR_FILE=Sun-1.0.0.jar
+SET JAR_FILE=Sun-1.1.0.jar
 
 REM Set the path to your JavaFX SDK lib folder (update this path to match your JavaFX SDK location)
 SET JAVAFX_LIB=D:\JavaFX SDK 21.0.6\lib

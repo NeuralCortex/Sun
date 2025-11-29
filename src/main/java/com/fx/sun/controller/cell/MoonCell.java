@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.apache.commons.text.StringEscapeUtils;
 import org.shredzone.commons.suncalc.MoonIllumination;
 import org.shredzone.commons.suncalc.MoonPhase;
@@ -60,17 +61,17 @@ public class MoonCell extends TableCell<DatePOJO, LocalDate> {
             VBox vBox2 = new VBox();
             HBox hBox = new HBox();
             VBox vBoxInfo = new VBox();
-            vBoxInfo.setId("hec-text-10");
+           
             AnchorPane anchorPane = new AnchorPane();
             anchorPane.setPrefSize(40, 40);
 
             Label datum = new Label(simpleDateFormat.format(calendar.getTime()));
-            datum.setId("hec-text-15");
+          
             if (isNight) {
-                datum.setId("hec-text-15-white");
+                
             }
             if (item.equals(now)) {
-                datum.setId("hec-text-15-red");
+                datum.getStyleClass().add("text-red");
             }
 
             MoonIllumination moonIllumination = MoonIllumination.compute().on(item).execute();
@@ -96,8 +97,8 @@ public class MoonCell extends TableCell<DatePOJO, LocalDate> {
             hBox.setAlignment(Pos.CENTER_LEFT);
 
             Label lbPhase = new Label(getPhaseName(moonIllumination.getClosestPhase()));
-            if(isNight){
-                lbPhase.setId("hec-text-white");
+            if (isNight) {
+               
             }
 
             MoonPhase.Parameters parameters = MoonPhase.compute().phase(MoonPhase.Phase.FULL_MOON);
@@ -110,13 +111,13 @@ public class MoonCell extends TableCell<DatePOJO, LocalDate> {
                 moonKind = bundle.getString("moon.super");
             }
             Label lbKind = new Label(moonKind);
-            lbKind.setId("hec-text-red");
+            lbKind.getStyleClass().add("text-red");
 
             DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
             Label lbLit = new Label(bundle.getString("moon.lit") + ":\n" + (decimalFormat.format(moonIllumination.getFraction() * 100.0f)) + "%");
-            if(isNight){
-                lbLit.setId("hec-text-white");
+            if (isNight) {
+               
             }
 
             vBoxInfo.getChildren().addAll(lbPhase, lbKind, lbLit);
@@ -128,15 +129,20 @@ public class MoonCell extends TableCell<DatePOJO, LocalDate> {
             VBox.setMargin(datum, new Insets(10));
             VBox.setMargin(hBox, new Insets(0, 10, 10, 10));
 
-             if (isNight) {
-                vBox.setId("hec-background-black");
+            if (isNight) {
+                vBox.getStyleClass().add("black");
             }
             if (item.getMonth().equals(month.getMonth())) {
-                vBox.setId("hec-background-orange");
-                if(isNight){
-                    vBox.setId("hec-background-black-border");
+                //vBox.getStyleClass().add("orange");
+                moonAnchorPage.setBackGroundColor(Color.web("#f96609"));
+                if (isNight) {
+                    vBox.getStyleClass().add("black");
                 }
+            } else {
+                moonAnchorPage.setBackGroundColor(Color.web("#3c3f41"));
             }
+
+            moonAnchorPage.redraw();
 
             setGraphic(vBox);
             setText(null);

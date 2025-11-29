@@ -63,12 +63,12 @@ public class MoonParamsCell extends TableCell<DatePOJO, LocalDate> {
 
             VBox vBox = new VBox();
             VBox infos = new VBox();
-            infos.setId("hec-text-10");
+          
 
             Label datum = new Label(simpleDateFormat.format(calendar.getTime()));
-            datum.setId("hec-text-15");
+           
             if (item.equals(now)) {
-                datum.setId("hec-text-15-red");
+                datum.getStyleClass().add("text-red");
             }
 
             LocalDateTime t = item.atTime(hour, min, sec);
@@ -91,7 +91,7 @@ public class MoonParamsCell extends TableCell<DatePOJO, LocalDate> {
                 moonKind = bundle.getString("moon.super");
             }
             Label lbKind = new Label(moonKind);
-            lbKind.setId("hec-text-red");
+            lbKind.getStyleClass().add("text-red");
 
             infos.setAlignment(Pos.CENTER_LEFT);
             infos.getChildren().addAll(lbAzi, lbAlti, lbDist, lbKind);
@@ -102,7 +102,7 @@ public class MoonParamsCell extends TableCell<DatePOJO, LocalDate> {
             VBox.setMargin(infos, new Insets(0, 10, 10, 10));
 
             if (item.getMonth().equals(month.getMonth())) {
-                vBox.setId("hec-background-orange");
+                vBox.getStyleClass().add("orange");
             }
 
             setGraphic(vBox);
