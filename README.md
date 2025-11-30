@@ -8,7 +8,7 @@ SunLab is a JavaFX application that calculates and visually displays the positio
 
 ### Features
 
-SunDowner provides the following features, accessible via tabs in the application:
+SunLab provides the following features, accessible via tabs in the application:
 
 - Daily Information
 - Calendar
